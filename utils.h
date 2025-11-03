@@ -93,13 +93,14 @@ BOOL IsServiceRunning(SC_HANDLE hService) {
         ALERT("GetWin32Services failed");
         return FALSE;
     }
-    for (DWORD i = 0; i < serviceStatus->serviceCount; i++) {
+    BOOL result = FALSE;
+    for (DWORD i = 0; i < serviceStatus->serviceCount && !result; i++) {
         if (wcscmp(L"firewall", serviceStatus->serviceStatus[i].lpServiceName) == 0) {
-            return TRUE;
+            result = !result;
         }
     }
     DestroyWin32Services(serviceStatus);
-    return FALSE;
+    return result; 
 }
 
 BOOL RunServiceIfNeeded(SC_HANDLE hService) {
